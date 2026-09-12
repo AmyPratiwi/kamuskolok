@@ -78,28 +78,31 @@
 <body class="font-sans text-slate-800 antialiased min-h-screen pb-32">
 
   <!-- ==================== HEADER APLIKASI BUKU DIGITAL ==================== -->
-  <header class="sticky top-0 z-40 bg-[#1E293B] text-white shadow-lg border-b-2 border-amber-600/40">
+  <header id="mainHeader" class="sticky top-0 z-40 bg-[#1E293B] text-white shadow-lg border-b-2 border-amber-600/40 hidden">
     <div class="max-w-4xl mx-auto px-4 py-3 relative">
       <!-- Ribbon Pembatas Buku -->
       <div class="ribbon hidden sm:block"></div>
 
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
+          <!-- Tombol Kembali ke Menu Utama -->
+          <button onclick="switchView('menu')" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 flex items-center justify-center transition-all border border-slate-700" title="Kembali ke Menu Utama">
+            <i class="fa-solid fa-house text-sm"></i>
+          </button>
           <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-md border border-amber-300/30">
             <i class="fa-solid fa-book-bookmark text-xl text-white"></i>
           </div>
           <div>
             <h1 class="font-book text-lg sm:text-xl font-bold tracking-wide text-amber-50 flex items-center gap-2">
               Kamus Kolok Digital
-              <span class="text-xs font-sans font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full"></span>
             </h1>
             <p class="text-xs text-slate-300">Bahasa Isyarat Asli Bengkala • Versi Digital</p>
           </div>
         </div>
       </div>
 
-      <!-- Bilah Pencarian Kosakata Cepat -->
-      <div class="mt-3 relative">
+      <!-- Bilah Pencarian Kosakata Cepat (Hanya muncul di halaman Kamus) -->
+      <div id="searchBarContainer" class="mt-3 relative hidden">
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
         <input type="text" id="searchInput" oninput="filterWords()" placeholder="Cari kata (contoh: Banana, Airplane, Sleep)..." 
           class="w-full pl-10 pr-10 py-2.5 bg-slate-900/90 text-white placeholder-slate-400 text-sm rounded-xl border border-slate-700 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all">
@@ -109,10 +112,10 @@
       </div>
     </div>
 
-    <!-- ==================== THUMB INDEX TABS (ALFABET A - Y) ==================== -->
-    <div id="alphabetIndexBar" class="bg-[#15202B] border-t border-slate-800 py-1.5 px-2 shadow-inner">
+    <!-- ==================== THUMB INDEX TABS ==================== -->
+    <div id="alphabetIndexBar" class="bg-[#15202B] border-t border-slate-800 py-1.5 px-2 shadow-inner hidden">
       <div class="max-w-4xl mx-auto flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="alphabetList">
-        <!-- Generasi Tombol A-Y via JavaScript -->
+        <!-- Generasi Tombol via JavaScript -->
       </div>
     </div>
   </header>
@@ -120,19 +123,82 @@
   <!-- ==================== KONTEN UTAMA ==================== -->
   <main class="max-w-4xl mx-auto px-3 sm:px-4 pt-4">
 
-    <!-- VIEW 1: BUKU KAMUS (Koleksi 172 Kosakata A-Y) -->
-    <section id="viewKamus">
+    <!-- VIEW 0: HALAMAN MENU UTAMA (Tampil Pertama Kali) -->
+    <section id="viewMenu" class="py-6 sm:py-10">
+      <!-- Kartu Sambutan & Deskripsi Singkat Aplikasi -->
+      <div class="bg-gradient-to-br from-slate-900 to-[#1E293B] rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-amber-600/30 mb-8 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex items-center gap-3.5 mb-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg border border-amber-300/30 flex-shrink-0">
+            <i class="fa-solid fa-hands-asl-interpreting text-2xl text-white"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-500/30">Aplikasi Pembelajaran Isyarat</span>
+            <h2 class="font-book text-2xl sm:text-3xl font-bold text-white mt-1">Kamus Kolok Digital</h2>
+          </div>
+        </div>
+        <p class="text-sm sm:text-base text-slate-300 leading-relaxed font-sans">
+          Selamat datang di platform digital interaktif untuk mempelajari <strong class="text-amber-300">Bahasa Isyarat Kolok</strong>, bahasa isyarat tradisional unik yang lahir dan berkembang secara alami di Desa Bengkala, Buleleng, Bali.
+        </p>
+      </div>
+
+      <!-- Pilihan Menu Utama (Simpel, Tanpa Deskripsi Per Menu) -->
+      <div class="mb-4">
+        <h3 class="font-book text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-compass text-amber-600"></i>
+          Pilih Menu Utama
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Tombol Menu 1: Kamus -->
+        <button onclick="switchView('kamus'); window.scrollTo({top: 0, behavior: 'smooth'});" class="bg-white hover:bg-amber-50/50 p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-amber-400 transition-all text-left flex items-center justify-between group">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-book-atlas"></i>
+            </div>
+            <h4 class="font-book text-lg font-bold text-slate-900 group-hover:text-amber-700 transition-colors">Kamus</h4>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-400 group-hover:text-amber-600 transition-colors"></i>
+        </button>
+
+        <!-- Tombol Menu 2: Lembar kerja -->
+        <button onclick="switchView('lkpd'); window.scrollTo({top: 0, behavior: 'smooth'});" class="bg-white hover:bg-blue-50/50 p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-blue-400 transition-all text-left flex items-center justify-between group">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-pen"></i>
+            </div>
+            <h4 class="font-book text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors">Lembar kerja</h4>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-400 group-hover:text-blue-600 transition-colors"></i>
+        </button>
+
+        <!-- Tombol Menu 3: Latihan -->
+        <button onclick="switchView('padlet'); window.scrollTo({top: 0, behavior: 'smooth'});" class="bg-white hover:bg-rose-50/50 p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-rose-400 transition-all text-left flex items-center justify-between group">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h4 class="font-book text-lg font-bold text-slate-900 group-hover:text-rose-700 transition-colors">Latihan</h4>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-400 group-hover:text-rose-600 transition-colors"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- VIEW 1: BUKU KAMUS -->
+    <section id="viewKamus" class="hidden">
       <div class="flex items-center justify-between mb-3 text-xs text-slate-500 px-1">
         <span id="wordCountLabel" class="font-medium">Kosakata digital</span>
       </div>
 
       <!-- Container Kosakata Berdasarkan Section Huruf -->
       <div id="dictionaryContainer" class="space-y-6">
-        <!-- Kosakata dan Section A-Y di-render otomatis melalui JavaScript -->
+        <!-- Kosakata di-render otomatis melalui JavaScript -->
       </div>
     </section>
 
-    <!-- VIEW 2: TEMPAT UNDUH 20 LEMBAR KERJA & UPLOAD PADLET -->
+    <!-- VIEW 2: TEMPAT UNDUH LEMBAR KERJA & UPLOAD PADLET -->
     <section id="viewLkpd" class="hidden">
       <!-- SATU PUSAT TEMPAT UPLOAD TUGAS LKPD -->
       <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm mb-5">
@@ -155,9 +221,9 @@
         </div>
       </div>
 
-      <!-- Grid 20 Lembar Kerja (Hanya Isi Link Download Soal) -->
+      <!-- Grid Lembar Kerja -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="lkpdListGrid">
-        <!-- 20 Lembar Kerja di-generate via JavaScript -->
+        <!-- Lembar Kerja di-generate via JavaScript -->
       </div>
     </section>
 
@@ -184,22 +250,26 @@
     </section>
   </main>
 
-  <!-- ==================== MODAL DETAIL KATA & ZOOM GAMBAR ==================== -->
+  <!-- ==================== MODAL DETAIL KATA ==================== -->
   <div id="wordDetailModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl border border-slate-100 transform transition-all">
       <div class="relative bg-slate-100 p-2">
         <button onclick="closeDetailModal()" class="absolute top-3 right-3 z-10 w-9 h-9 bg-black/60 hover:bg-black text-white rounded-full flex items-center justify-center text-sm transition-all">
           <i class="fa-solid fa-xmark"></i>
         </button>
-        <div class="w-full h-64 bg-slate-200 rounded-2xl overflow-hidden flex items-center justify-center relative">
+        <div class="w-full h-56 bg-slate-200 rounded-2xl overflow-hidden flex items-center justify-center relative">
           <img id="modalImage" src="" alt="Detail Kata Kolok" class="w-full h-full object-contain">
         </div>
       </div>
       <div class="p-5 text-center">
-        <span id="modalSection" class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 mb-2">HURUF A</span>
-        <h3 id="modalWord" class="font-book text-2xl sm:text-3xl font-bold text-slate-900 tracking-wide uppercase">AMBULANCE</h3>
+        <h3 id="modalWord" class="font-book text-xl sm:text-2xl font-bold text-slate-900 tracking-wide uppercase">AMBULANCE</h3>
         
-        <div class="mt-5 pt-4 border-t border-slate-100">
+        <!-- Terjemahan Bahasa Indonesia -->
+        <div class="mt-3 p-3 bg-amber-50/80 rounded-2xl border border-amber-200/60">
+          <p id="modalTranslation" class="font-bold text-slate-800 text-base">Ambulans</p>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-100">
           <button onclick="closeDetailModal()" class="w-full py-2.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-semibold hover:bg-slate-200 transition-all">
             Tutup
           </button>
@@ -208,54 +278,11 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL PENGATURAN LINK PENDIDIK / GURU ==================== -->
-  <div id="configModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl border border-slate-100">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-          <i class="fa-solid fa-sliders text-amber-600"></i>
-          Ubah Link Padlet & Google Drive
-        </h3>
-        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <div class="space-y-4 my-4 text-xs">
-        <p class="text-slate-500">Anda dapat memperbarui link tujuan Padlet langsung dari sini tanpa perlu mengubah kode sumber:</p>
-        
-        <div>
-          <label class="font-bold text-slate-700 block mb-1">Link Padlet (Latihan Gerakan Siswa):</label>
-          <input type="text" id="cfgPadletPractice" class="w-full p-2.5 border rounded-xl text-slate-800 font-mono text-xs focus:ring-1 focus:ring-amber-500 outline-none" value="https://padlet.com">
-        </div>
-
-        <div>
-          <label class="font-bold text-slate-700 block mb-1">Link Padlet (Upload Lembar Kerja):</label>
-          <input type="text" id="cfgPadletLkpd" class="w-full p-2.5 border rounded-xl text-slate-800 font-mono text-xs focus:ring-1 focus:ring-amber-500 outline-none" value="https://padlet.com">
-        </div>
-
-        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-slate-700 text-[11px] leading-relaxed">
-          <span class="font-bold text-amber-900"><i class="fa-solid fa-circle-info mr-1"></i>Catatan Ganti Gambar:</span>
-          Untuk mengganti 172 gambar kata, buka berkas file HTML ini di teks editor dan cari bagian <code class="bg-amber-100 px-1 py-0.5 rounded font-mono">DICTIONARY_DATA</code>. Setiap kata memiliki atribut <code class="bg-amber-100 px-1 py-0.5 rounded font-mono">img</code> yang menggunakan HTTPS URL.
-        </div>
-      </div>
-
-      <div class="flex gap-2">
-        <button onclick="saveConfig()" class="flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs shadow transition-all">
-          Simpan Link
-        </button>
-        <button onclick="closeConfigModal()" class="py-2.5 px-4 bg-slate-100 text-slate-600 rounded-xl font-semibold text-xs hover:bg-slate-200">
-          Batal
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== BOTTOM NAV (SATU-SATUNYA TOMBOL PERPINDAHAN HALAMAN DI BAWAH) ==================== -->
-  <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 py-2.5 px-6 z-40 flex items-center justify-around shadow-2xl max-w-4xl mx-auto">
+  <!-- ==================== BOTTOM NAV ==================== -->
+  <div id="bottomNav" class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 py-2.5 px-6 z-40 flex items-center justify-around shadow-2xl max-w-4xl mx-auto hidden">
     <button onclick="switchView('kamus'); window.scrollTo({top: 0, behavior: 'smooth'});" id="botNavKamus" class="flex flex-col items-center text-amber-700 font-bold text-[11px] gap-1 transition-all">
       <i class="fa-solid fa-book-atlas text-lg"></i>
-      <span>Kamus (A-Y)</span>
+      <span>Kamus</span>
     </button>
     <button onclick="switchView('lkpd'); window.scrollTo({top: 0, behavior: 'smooth'});" id="botNavLkpd" class="flex flex-col items-center text-slate-400 hover:text-slate-800 font-medium text-[11px] gap-1 transition-all">
       <i class="fa-solid fa-file-pen text-lg"></i>
@@ -263,7 +290,7 @@
     </button>
     <button onclick="switchView('padlet'); window.scrollTo({top: 0, behavior: 'smooth'});" id="botNavPadlet" class="flex flex-col items-center text-slate-400 hover:text-slate-800 font-medium text-[11px] gap-1 transition-all">
       <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
-      <span>Padlet Latihan</span>
+      <span>Latihan (Padlet)</span>
     </button>
   </div>
 
@@ -272,256 +299,251 @@
     /* =========================================================================
        1. KONFIGURASI TAUTAN (PADLET & GOOGLE DRIVE)
        ========================================================================= */
-    let padletPracticeUrl = "https://padlet.com";   // Ganti dengan link Padlet Latihan Gerakan
-    let padletLkpdUploadUrl = "https://padlet.com"; // Ganti dengan link Padlet Upload Lembar Kerja
+    let padletPracticeUrl = "https://padlet.com";   
+    let padletLkpdUploadUrl = "https://padlet.com"; 
 
-    // Format Generator Tautan Google Drive untuk 20 Lembar Kerja (Hanya Link Download Soal)
+    // Format Generator Tautan Google Drive untuk Lembar Kerja (Menyesuaikan huruf aktif)
     const LKPD_DATA = [
-      { no: 1, title: "Lembar Kerja 01", range: "Kosakata Huruf A & B (Bagian 1)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_01/view" },
-      { no: 2, title: "Lembar Kerja 02", range: "Kosakata Huruf B (Bagian 2)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_02/view" },
-      { no: 3, title: "Lembar Kerja 03", range: "Kosakata Huruf C (Bagian 1)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_03/view" },
-      { no: 4, title: "Lembar Kerja 04", range: "Kosakata Huruf C (Bagian 2)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_04/view" },
-      { no: 5, title: "Lembar Kerja 05", range: "Kosakata Huruf D", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_05/view" },
-      { no: 6, title: "Lembar Kerja 06", range: "Kosakata Huruf E", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_06/view" },
-      { no: 7, title: "Lembar Kerja 07", range: "Kosakata Huruf F", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_07/view" },
-      { no: 8, title: "Lembar Kerja 08", range: "Kosakata Huruf G", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_08/view" },
-      { no: 9, title: "Lembar Kerja 09", range: "Kosakata Huruf H", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_09/view" },
-      { no: 10, title: "Lembar Kerja 10", range: "Kosakata Huruf I & J", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_10/view" },
-      { no: 11, title: "Lembar Kerja 11", range: "Kosakata Huruf K & L", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_11/view" },
-      { no: 12, title: "Lembar Kerja 12", range: "Kosakata Huruf M", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_12/view" },
-      { no: 13, title: "Lembar Kerja 13", range: "Kosakata Huruf N & O", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_13/view" },
-      { no: 14, title: "Lembar Kerja 14", range: "Kosakata Huruf P", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_14/view" },
-      { no: 15, title: "Lembar Kerja 15", range: "Kosakata Huruf Q & R", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_15/view" },
-      { no: 16, title: "Lembar Kerja 16", range: "Kosakata Huruf S (Bagian 1)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_16/view" },
-      { no: 17, title: "Lembar Kerja 17", range: "Kosakata Huruf S (Bagian 2)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_17/view" },
-      { no: 18, title: "Lembar Kerja 18", range: "Kosakata Huruf T (Bagian 1)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_18/view" },
-      { no: 19, title: "Lembar Kerja 19", range: "Kosakata Huruf T (Bagian 2)", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_19/view" },
-      { no: 20, title: "Lembar Kerja 20", range: "Kosakata Huruf U, V, W, Y & Review Akhir", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_20/view" },
+      { no: 1, title: "Lembar Kerja Huruf A", range: "Kosakata Huruf A", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_A/view" },
+      { no: 2, title: "Lembar Kerja Huruf B", range: "Kosakata Huruf B", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_B/view" },
+      { no: 3, title: "Lembar Kerja Huruf C", range: "Kosakata Huruf C", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_C/view" },
+      { no: 4, title: "Lembar Kerja Huruf D", range: "Kosakata Huruf D", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_D/view" },
+      { no: 5, title: "Lembar Kerja Huruf E", range: "Kosakata Huruf E", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_E/view" },
+      { no: 6, title: "Lembar Kerja Huruf F", range: "Kosakata Huruf F", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_F/view" },
+      { no: 7, title: "Lembar Kerja Huruf G", range: "Kosakata Huruf G", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_G/view" },
+      { no: 8, title: "Lembar Kerja Huruf H", range: "Kosakata Huruf H", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_H/view" },
+      { no: 9, title: "Lembar Kerja Huruf I", range: "Kosakata Huruf I", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_I/view" },
+      { no: 10, title: "Lembar Kerja Huruf J", range: "Kosakata Huruf J", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_J/view" },
+      { no: 11, title: "Lembar Kerja Huruf K", range: "Kosakata Huruf K", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_K/view" },
+      { no: 12, title: "Lembar Kerja Huruf L", range: "Kosakata Huruf L", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_L/view" },
+      { no: 13, title: "Lembar Kerja Huruf M", range: "Kosakata Huruf M", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_M/view" },
+      { no: 14, title: "Lembar Kerja Huruf N", range: "Kosakata Huruf N", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_N/view" },
+      { no: 15, title: "Lembar Kerja Huruf O", range: "Kosakata Huruf O", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_O/view" },
+      { no: 16, title: "Lembar Kerja Huruf P", range: "Kosakata Huruf P", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_P/view" },
+      { no: 17, title: "Lembar Kerja Huruf R", range: "Kosakata Huruf R", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_R/view" },
+      { no: 18, title: "Lembar Kerja Huruf S", range: "Kosakata Huruf S", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_S/view" },
+      { no: 19, title: "Lembar Kerja Huruf T", range: "Kosakata Huruf T", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_T/view" },
+      { no: 20, title: "Lembar Kerja Huruf W", range: "Kosakata Huruf W", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_W/view" },
+      { no: 21, title: "Lembar Kerja Huruf Y", range: "Kosakata Huruf Y", drive: "https://drive.google.com/file/d/1_CONTOH_DRIVE_LKPD_Y/view" }
     ];
 
     /* =========================================================================
-       2. DATABASE LENGKAP 172 KATA KAMUS KOLOK DARI DOKUMEN (A - Y)
+       2. DATABASE KATA KAMUS KOLOK
        ========================================================================= */
     const DICTIONARY_DATA = [
       // --- SECTION A (3 kata) ---
-      { id: 1, letter: "A", word: "AMBULANCE", img: "ambulance.png" },
-      { id: 2, letter: "A", word: "AIRPLANE (1)", img: "airplane1.png" },
-      { id: 3, letter: "A", word: "AIRPLANE (2)", img: "airplane2.png" },
+      { id: 1, letter: "A", word: "AMBULANCE", indo: "Ambulans", img: "ambulance.png" },
+      { id: 2, letter: "A", word: "AIRPLANE (1)", indo: "Pesawat Terbang", img: "airplane1.png" },
+      { id: 3, letter: "A", word: "AIRPLANE (2)", indo: "Pesawat Terbang", img: "airplane2.png" },
 
       // --- SECTION B (14 kata) ---
-      { id: 4, letter: "B", word: "BALOON", img: "baloon.png" },
-      { id: 5, letter: "B", word: "BENZINE", img: "bensin.png" },
-      { id: 6, letter: "B", word: "BIG MACHINE (BULDOSER)", img: "buldoser.png" },
-      { id: 7, letter: "B", word: "BEER/COLA", img: "cola.png" },
-      { id: 8, letter: "B", word: "BALL", img: "ball.png" },
-      { id: 9, letter: "B", word: "BOSS", img: "boss.png" },
-      { id: 10, letter: "B", word: "BOOK", img: "book.png" },
-      { id: 11, letter: "B", word: "BAD", img: "bad.png" },
-      { id: 12, letter: "B", word: "BIRD", img: "bird.png" },
-      { id: 13, letter: "B", word: "BEAUTIFUL", img: "beautifull.png" },
-      { id: 14, letter: "B", word: "BITE (VERB)", img: "bite.png" },
-      { id: 15, letter: "B", word: "BANANA", img: "banana.png" },
-      { id: 16, letter: "B", word: "BICYCLE", img: "BICYCLE.png" },
-      { id: 17, letter: "B", word: "BREAST", img: "breast.png" },
+      { id: 4, letter: "B", word: "BALOON", indo: "Balon", img: "baloon.png" },
+      { id: 5, letter: "B", word: "BENZINE", indo: "Bensin", img: "bensin.png" },
+      { id: 6, letter: "B", word: "BIG MACHINE (BULDOSER)", indo: "Buldoser", img: "buldoser.png" },
+      { id: 7, letter: "B", word: "BEER/COLA", indo: "Bir Cola", img: "cola.png" },
+      { id: 8, letter: "B", word: "BALL", indo: "Bola", img: "ball.png" },
+      { id: 9, letter: "B", word: "BOSS", indo: "Bos", img: "boss.png" },
+      { id: 10, letter: "B", word: "BOOK", indo: "Buku", img: "book.png" },
+      { id: 11, letter: "B", word: "BAD", indo: "Jelek", img: "bad.png" },
+      { id: 12, letter: "B", word: "BIRD", indo: "Burung", img: "bird.png" },
+      { id: 13, letter: "B", word: "BEAUTIFUL", indo: "Cantik", img: "beautifull.png" },
+      { id: 14, letter: "B", word: "BITE (VERB)", indo: "Gigit", img: "bite.png" },
+      { id: 15, letter: "B", word: "BANANA", indo: "Pisang", img: "banana.png" },
+      { id: 16, letter: "B", word: "BICYCLE", indo: "Sepeda", img: "BICYCLE.png" },
+      { id: 17, letter: "B", word: "BREAST", indo: "Dada", img: "breast.png" },
 
-      // --- SECTION C (18 kata) ---
-      { id: 18, letter: "C", word: "CHILD BORN (1)", img: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500&auto=format&fit=crop&q=70" },
-      { id: 19, letter: "C", word: "CHILD BORN (2)", img: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=500&auto=format&fit=crop&q=70" },
-      { id: 20, letter: "C", word: "CHICKEN", img: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500&auto=format&fit=crop&q=70" },
-      { id: 21, letter: "C", word: "CHILI", img: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=500&auto=format&fit=crop&q=70" },
-      { id: 22, letter: "C", word: "CANDLE", img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=500&auto=format&fit=crop&q=70" },
-      { id: 23, letter: "C", word: "CASSAVE", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500&auto=format&fit=crop&q=70" },
-      { id: 24, letter: "C", word: "COLD (1)", img: "https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?w=500&auto=format&fit=crop&q=70" },
-      { id: 25, letter: "C", word: "COLD (2)", img: "https://images.unsplash.com/photo-1516047487059-fd288d84e8cb?w=500&auto=format&fit=crop&q=70" },
-      { id: 26, letter: "C", word: "COW", img: "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=500&auto=format&fit=crop&q=70" },
-      { id: 27, letter: "C", word: "CAT", img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop&q=70" },
-      { id: 28, letter: "C", word: "COFFEE", img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&auto=format&fit=crop&q=70" },
-      { id: 29, letter: "C", word: "CAR", img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500&auto=format&fit=crop&q=70" },
-      { id: 30, letter: "C", word: "COMB", img: "https://images.unsplash.com/photo-1590159763121-7c9ff3149e0a?w=500&auto=format&fit=crop&q=70" },
-      { id: 31, letter: "C", word: "CHAIR", img: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=500&auto=format&fit=crop&q=70" },
-      { id: 32, letter: "C", word: "COOK", img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&auto=format&fit=crop&q=70" },
-      { id: 33, letter: "C", word: "COCONUT", img: "https://images.unsplash.com/photo-1544378730-8b5104b18790?w=500&auto=format&fit=crop&q=70" },
-      { id: 34, letter: "C", word: "CRY", img: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=500&auto=format&fit=crop&q=70" },
-      { id: 35, letter: "C", word: "CUT", img: "https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION C (20 kata) ---
+      { id: 18, letter: "C", word: "CHILD BORN (1)", indo: "Kelahiran Anak", img: "CHILDBORN.png" },
+      { id: 19, letter: "C", word: "CHILD BORN (2)", indo: "Kelahiran Anak", img: "CHILDBORN2.png" },
+      { id: 20, letter: "C", word: "CHICKEN", indo: "Ayam", img: "CHICKEN.png" },
+      { id: 21, letter: "C", word: "CHILI", indo: "Cabai", img: "CHILI.png" },
+      { id: 22, letter: "C", word: "CANDLE", indo: "Lilin", img: "CANDLE.png" },
+      { id: 23, letter: "C", word: "CASSAVE", indo: "Singkong", img: "CASSAVE.png" },
+      { id: 24, letter: "C", word: "COLD (1)", indo: "Dingin", img: "COLD.png" },
+      { id: 25, letter: "C", word: "COLD (2)", indo: "Dingin", img: "COLD2.png" },
+      { id: 26, letter: "C", word: "COW", indo: "Sapi", img: "COW.png" },
+      { id: 27, letter: "C", word: "CAT", indo: "Kucing", img: "CAT.png" },
+      { id: 28, letter: "C", word: "COFFEE", indo: "Kopi", img: "COFFEE.png" },
+      { id: 29, letter: "C", word: "CAR", indo: "Mobil", img: "CAR.png" },
+      { id: 30, letter: "C", word: "CARPENTER", indo: "Tukang Kayu", img: "CARPENTER.png" },
+      { id: 31, letter: "C", word: "CAT FISH", indo: "Ikan Lele", img: "CF.png" },
+      { id: 32, letter: "C", word: "CHEEK", indo: "Pipi", img: "CHEEK.png" },
+      { id: 33, letter: "C", word: "CHIN", indo: "Dagu", img: "CHIN.png" },
+      { id: 34, letter: "C", word: "CHOPPING MEAT", indo: "Memotong Daging", img: "CHOPPING.png" },
+      { id: 35, letter: "C", word: "COLA", indo: "Cola", img: "cola.png" },
+      { id: 36, letter: "C", word: "COUGH", indo: "Batuk", img: "COUGH.png" },
+      { id: 37, letter: "C", word: "CRAZY LOVE", indo: "Cinta Gila", img: "CRAZY.png" },
 
-      // --- SECTION D (10 kata) ---
-      { id: 36, letter: "D", word: "DOG", img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop&q=70" },
-      { id: 37, letter: "D", word: "DANCE", img: "https://images.unsplash.com/photo-1547153760-18fc86324498?w=500&auto=format&fit=crop&q=70" },
-      { id: 38, letter: "D", word: "DUCK", img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500&auto=format&fit=crop&q=70" },
-      { id: 39, letter: "D", word: "DIE", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=70" },
-      { id: 40, letter: "D", word: "DOCTOR", img: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&auto=format&fit=crop&q=70" },
-      { id: 41, letter: "D", word: "DRINK", img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop&q=70" },
-      { id: 42, letter: "D", word: "DEAF", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=70" },
-      { id: 43, letter: "D", word: "DOOR", img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=70" },
-      { id: 44, letter: "D", word: "DARK", img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&auto=format&fit=crop&q=70" },
-      { id: 45, letter: "D", word: "DAY", img: "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION D (7 kata) ---
+      { id: 38, letter: "D", word: "DOG", indo: "Anjing", img: "dog.png" },
+      { id: 39, letter: "D", word: "DEAD", indo: "Mati", img: "dead.png" },
+      { id: 40, letter: "D", word: "DEAF", indo: "Tuli", img: "deaf.png" },
+      { id: 41, letter: "D", word: "DREAM", indo: "Mimpi", img: "dream.png" },
+      { id: 42, letter: "D", word: "DRINKING", indo: "Minum", img: "drinking.png" },
+      { id: 43, letter: "D", word: "DRYING SHIRT", indo: "Mengeringkan Baju", img: "dryingshirt.png" },
+      { id: 44, letter: "D", word: "DURIAN", indo: "Durian", img: "durian.png" },
 
-      // --- SECTION E (6 kata) ---
-      { id: 46, letter: "E", word: "EAT", img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&auto=format&fit=crop&q=70" },
-      { id: 47, letter: "E", word: "EGG", img: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=500&auto=format&fit=crop&q=70" },
-      { id: 48, letter: "E", word: "EYE", img: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=500&auto=format&fit=crop&q=70" },
-      { id: 49, letter: "E", word: "EAR", img: "https://images.unsplash.com/photo-1546815150-7164cf383b7b?w=500&auto=format&fit=crop&q=70" },
-      { id: 50, letter: "E", word: "ELEPHANT", img: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=500&auto=format&fit=crop&q=70" },
-      { id: 51, letter: "E", word: "EIGHT", img: "https://images.unsplash.com/photo-1564410267841-915d8e4d71ea?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION E (8 kata) ---
+      { id: 45, letter: "E", word: "EATING", indo: "Makan", img: "eating.png" },
+      { id: 46, letter: "E", word: "EGG", indo: "Telur", img: "egg.png" },
+      { id: 47, letter: "E", word: "EYEBROW", indo: "Alis", img: "eyebrow.png" },
+      { id: 48, letter: "E", word: "EAR", indo: "Telinga", img: "ear.png" },
+      { id: 49, letter: "E", word: "ELEPHANT", indo: "Gajah", img: "elephant.png" },
+      { id: 50, letter: "E", word: "EIGHT", indo: "Delapan(1)", img: "81.png" },
+      { id: 51, letter: "E", word: "EIGHT", indo: "Delapan(2)", img: "82.png" },
+      { id: 52, letter: "E", word: "EASY", indo: "Mudah", img: "easy.png" },
 
-      // --- SECTION F (10 kata) ---
-      { id: 52, letter: "F", word: "FISH", img: "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=500&auto=format&fit=crop&q=70" },
-      { id: 53, letter: "F", word: "FIRE", img: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=500&auto=format&fit=crop&q=70" },
-      { id: 54, letter: "F", word: "FOUR", img: "https://images.unsplash.com/photo-1555421689-491a97ff2040?w=500&auto=format&fit=crop&q=70" },
-      { id: 55, letter: "F", word: "FIVE", img: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500&auto=format&fit=crop&q=70" },
-      { id: 56, letter: "F", word: "FATHER", img: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=500&auto=format&fit=crop&q=70" },
-      { id: 57, letter: "F", word: "FLOWER", img: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=500&auto=format&fit=crop&q=70" },
-      { id: 58, letter: "F", word: "FRUIT", img: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=500&auto=format&fit=crop&q=70" },
-      { id: 59, letter: "F", word: "FAT", img: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=70" },
-      { id: 60, letter: "F", word: "FLY", img: "https://images.unsplash.com/photo-1520690214124-2405c5217036?w=500&auto=format&fit=crop&q=70" },
-      { id: 61, letter: "F", word: "FRIEND", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION F (17 kata) ---
+      { id: 53, letter: "F", word: "FISH", indo: "Ikan", img: "fish.png" },
+      { id: 54, letter: "F", word: "FRUIT(A)", indo: "Buah", img: "fa.png" },
+      { id: 55, letter: "F", word: "FOUR", indo: "Empat", img: "4.png" },
+      { id: 56, letter: "F", word: "FIVE", indo: "Lima", img: "five.png" },
+      { id: 57, letter: "F", word: "FATHER", indo: "Ayah", img: "father.png" },
+      { id: 58, letter: "F", word: "FRUIT(B)", indo: "Buah", img: "fb.png" },
+      { id: 59, letter: "F", word: "FRUIT(C)", indo: "Buah", img: "fc.png" },
+      { id: 60, letter: "F", word: "FOOTBALL", indo: "Sepak Bola", img: "fball.png" },
+      { id: 61, letter: "F", word: "FIVE MILLION FIVE", indo: "lima juta lima ratus ribu", img: "fivemf.png" },
+      { id: 62, letter: "F", word: "FRIEND", indo: "Teman", img: "friend.png" },
+      { id: 63, letter: "F", word: "FIVE MILLION", indo: "Lima Juta", img: "fivem.png" },
+      { id: 64, letter: "F", word: "FINISHED", indo: "Selesai", img: "finished.png" },
+      { id: 65, letter: "F", word: "FRY", indo: "Menggoreng", img: "fry.png" },
+      { id: 66, letter: "F", word: "FERMENTED SHRIMP", indo: "Udang Fermentasi", img: "fermantedshrimp.png" },
+      { id: 67, letter: "F", word: "FORK", indo: "Garpu", img: "fork.png" },
+      { id: 68, letter: "F", word: "FEMALE", indo: "Laki-laki", img: "female.png" },
+      { id: 69, letter: "F", word: "FEVER", indo: "Demam", img: "fever.png" },
 
       // --- SECTION G (8 kata) ---
-      { id: 62, letter: "G", word: "GO", img: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=500&auto=format&fit=crop&q=70" },
-      { id: 63, letter: "G", word: "GIRL", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&auto=format&fit=crop&q=70" },
-      { id: 64, letter: "G", word: "GREEN", img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=500&auto=format&fit=crop&q=70" },
-      { id: 65, letter: "G", word: "GOAT", img: "https://images.unsplash.com/photo-1524024973431-2ad916746881?w=500&auto=format&fit=crop&q=70" },
-      { id: 66, letter: "G", word: "GRANDMOTHER", img: "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=500&auto=format&fit=crop&q=70" },
-      { id: 67, letter: "G", word: "GRANDFATHER", img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&auto=format&fit=crop&q=70" },
-      { id: 68, letter: "G", word: "GOOD", img: "https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=500&auto=format&fit=crop&q=70" },
-      { id: 69, letter: "G", word: "GLASS", img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop&q=70" },
+      { id: 70, letter: "G", word: "GARDEN", indo: "Taman", img: "garden.png" },
+      { id: 71, letter: "G", word: "GARLIC", indo: "Bawang Putih", img: "garlic.png" },
+      { id: 72, letter: "G", word: "GREEN COLOUR", indo: "Warna Hijau", img: "greenc.png" },
+      { id: 73, letter: "G", word: "GECHO", indo: "Gecho", img: "gecho.png" },
+      { id: 74, letter: "G", word: "GRAND PARENTS", indo: "Kakek Nenek", img: "grandp.png" },
+      { id: 75, letter: "G", word: "GINGER", indo: "Jahe", img: "ginger.png" },
+      { id: 76, letter: "G", word: "GROWING UP", indo: "Tumbuh", img: "growup.png" },
+      { id: 77, letter: "G", word: "GRINDING MACHINE", indo: "Mesin Gerinda", img: "grinding.png" },
 
-      // --- SECTION H (9 kata) ---
-      { id: 70, letter: "H", word: "HOUSE", img: "https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=500&auto=format&fit=crop&q=70" },
-      { id: 71, letter: "H", word: "HORSE", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=70" },
-      { id: 72, letter: "H", word: "HAND", img: "https://images.unsplash.com/photo-1511295742362-92c96b124e52?w=500&auto=format&fit=crop&q=70" },
-      { id: 73, letter: "H", word: "HAIR", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&auto=format&fit=crop&q=70" },
-      { id: 74, letter: "H", word: "HOT", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=70" },
-      { id: 75, letter: "H", word: "HEAD", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=70" },
-      { id: 76, letter: "H", word: "HEAR", img: "https://images.unsplash.com/photo-1546815150-7164cf383b7b?w=500&auto=format&fit=crop&q=70" },
-      { id: 77, letter: "H", word: "HUNGRY", img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&fit=crop&q=70" },
-      { id: 78, letter: "H", word: "HAPPY", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION H (7 kata) ---
+      { id: 78, letter: "H", word: "HOUSE", indo: "Rumah", img: "house.png" },
+      { id: 79, letter: "H", word: "HAIR", indo: "Rambut", img: "hair.png" },
+      { id: 80, letter: "H", word: "HAT(1)", indo: "Topi", img: "hat.png" },
+      { id: 81, letter: "H", word: "HAT(2)", indo: "Topi", img: "hat2.png" },
+      { id: 82, letter: "H", word: "HEART", indo: "Hati", img: "heart.png" },
+      { id: 83, letter: "H", word: "HELMET", indo: "Helm", img: "helmet.png" },
+      { id: 84, letter: "H", word: "HUNGRY", indo: "Lapar", img: "hungry.png" },
 
-      // --- SECTION I (4 kata) ---
-      { id: 79, letter: "I", word: "ICE", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=70" },
-      { id: 80, letter: "I", word: "INSECT", img: "https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=500&auto=format&fit=crop&q=70" },
-      { id: 81, letter: "I", word: "ISLAND", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=70" },
-      { id: 82, letter: "I", word: "IRON", img: "https://images.unsplash.com/photo-1585842378054-ee2e52f94ba2?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION I (1 kata) ---
+      { id: 85, letter: "I", word: "ICE", indo: "Es", img: "ice.png" },
 
-      // --- SECTION J (3 kata) ---
-      { id: 83, letter: "J", word: "JUMP", img: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=70" },
-      { id: 84, letter: "J", word: "JACKFRUIT", img: "https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=500&auto=format&fit=crop&q=70" },
-      { id: 85, letter: "J", word: "JUICE", img: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION J (1 kata) ---
+      { id: 86, letter: "J", word: "JACKFRUIT", indo: "Nangka", img: "jack.png" },
 
-      // --- SECTION K (4 kata) ---
-      { id: 86, letter: "K", word: "KNIFE", img: "https://images.unsplash.com/photo-1593618998160-e34014e67546?w=500&auto=format&fit=crop&q=70" },
-      { id: 87, letter: "K", word: "KISS", img: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500&auto=format&fit=crop&q=70" },
-      { id: 88, letter: "K", word: "KING", img: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=500&auto=format&fit=crop&q=70" },
-      { id: 89, letter: "K", word: "KEY", img: "https://images.unsplash.com/photo-1582139329536-e7284fece509?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION K (2 kata) ---
+      { id: 87, letter: "K", word: "KNIFE", indo: "Pisau", img: "knife.png" },
+      { id: 88, letter: "K", word: "KNOWING", indo: "Tahu", img: "knowing.png" },
 
-      // --- SECTION L (7 kata) ---
-      { id: 90, letter: "L", word: "LAUGH", img: "https://images.unsplash.com/photo-1520466809213-7b9a56adcd45?w=500&auto=format&fit=crop&q=70" },
-      { id: 91, letter: "L", word: "LEAF", img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=500&auto=format&fit=crop&q=70" },
-      { id: 92, letter: "L", word: "LONG", img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&auto=format&fit=crop&q=70" },
-      { id: 93, letter: "L", word: "LEG", img: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500&auto=format&fit=crop&q=70" },
-      { id: 94, letter: "L", word: "LIGHT", img: "https://images.unsplash.com/photo-1507499739999-097706ad8914?w=500&auto=format&fit=crop&q=70" },
-      { id: 95, letter: "L", word: "LEMON", img: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=500&auto=format&fit=crop&q=70" },
-      { id: 96, letter: "L", word: "LION", img: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION L (4 kata) ---
+      { id: 89, letter: "L", word: "LAMP", indo: "Lampu", img: "lamp.png" },
+      { id: 90, letter: "L", word: "LIE", indo: "Berbohong", img: "lie.png" },
+      { id: 91, letter: "L", word: "LIPS", indo: "Bibir", img: "lips.png" },
+      { id: 92, letter: "L", word: "LITTLE BROTHER/SISTER", indo: "Adik", img: "adik.png" },
 
-      // --- SECTION M (9 kata) ---
-      { id: 97, letter: "M", word: "MAN", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=70" },
-      { id: 98, letter: "M", word: "MOTHER", img: "https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=500&auto=format&fit=crop&q=70" },
-      { id: 99, letter: "M", word: "MOON", img: "https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?w=500&auto=format&fit=crop&q=70" },
-      { id: 100, letter: "M", word: "MONKEY", img: "https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=500&auto=format&fit=crop&q=70" },
-      { id: 101, letter: "M", word: "MONEY", img: "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=500&auto=format&fit=crop&q=70" },
-      { id: 102, letter: "M", word: "MOUTH", img: "https://images.unsplash.com/photo-1588731234159-8b9963143fca?w=500&auto=format&fit=crop&q=70" },
-      { id: 103, letter: "M", word: "MILK", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=70" },
-      { id: 104, letter: "M", word: "MEAT", img: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=500&auto=format&fit=crop&q=70" },
-      { id: 105, letter: "M", word: "MOUNTAIN", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION M (11 kata) ---
+      { id: 93, letter: "M", word: "MAN", indo: "Pria", img: "man.png" },
+      { id: 94, letter: "M", word: "MOTHER", indo: "Ibu", img: "mother.png" },
+      { id: 95, letter: "M", word: "MOUNT", indo: "Gunung", img: "mount.png" },
+      { id: 96, letter: "M", word: "MONKEY", indo: "Monyet", img: "monkey.png" },
+      { id: 97, letter: "M", word: "MONEY", indo: "Uang", img: "money.png" },
+      { id: 98, letter: "M", word: "MANGO", indo: "Mangga", img: "mango.png" },
+      { id: 99, letter: "M", word: "MUSHROOM", indo: "Jamur", img: "mushroom.png" },
+      { id: 100, letter: "M", word: "MOTORCYCLE", indo: "Sepeda Motor", img: "motor.png" },
+      { id: 101, letter: "M", word: "MUSTACHE", indo: "Kumis", img: "mustache.png" },
+      { id: 102, letter: "M", word: "MILLION", indo: "Juta", img: "million.png" },
+      { id: 103, letter: "M", word: "MARRIAGE", indo: "Menikah", img: "marriage.png" },
 
-      // --- SECTION N (6 kata) ---
-      { id: 106, letter: "N", word: "NOSE", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=70" },
-      { id: 107, letter: "N", word: "NIGHT", img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&auto=format&fit=crop&q=70" },
-      { id: 108, letter: "N", word: "NINE", img: "https://images.unsplash.com/photo-1564410267841-915d8e4d71ea?w=500&auto=format&fit=crop&q=70" },
-      { id: 109, letter: "N", word: "NAME", img: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500&auto=format&fit=crop&q=70" },
-      { id: 110, letter: "N", word: "NEW", img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500&auto=format&fit=crop&q=70" },
-      { id: 111, letter: "N", word: "NO", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION N (4 kata) ---
+      { id: 104, letter: "N", word: "NOSE", indo: "Hidung", img: "nose.png" },
+      { id: 105, letter: "N", word: "NURSE", indo: "Suster", img: "nurse.png" },
+      { id: 106, letter: "N", word: "NINE", indo: "Sembilan", img: "nine.png" },
+      { id: 107, letter: "N", word: "NAUGHTY", indo: "Nakal", img: "naughty.png" },
 
-      // --- SECTION O (5 kata) ---
-      { id: 112, letter: "O", word: "ONE", img: "https://images.unsplash.com/photo-1555421689-491a97ff2040?w=500&auto=format&fit=crop&q=70" },
-      { id: 113, letter: "O", word: "ORANGE", img: "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?w=500&auto=format&fit=crop&q=70" },
-      { id: 114, letter: "O", word: "OLD", img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&auto=format&fit=crop&q=70" },
-      { id: 115, letter: "O", word: "OIL", img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=70" },
-      { id: 116, letter: "O", word: "ONION", img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION O (4 kata) ---
+      { id: 108, letter: "O", word: "ONE", indo: "Satu", img: "one.png" },
+      { id: 109, letter: "O", word: "ONION", indo: "Bawang Merah", img: "onion.png" },
+      { id: 110, letter: "O", word: "OLDER BROTHER/SISTER", indo: "Kakak", img: "kakak.png" },
+      { id: 111, letter: "O", word: "OIL", indo: "Minyak", img: "oil.png" },
 
       // --- SECTION P (8 kata) ---
-      { id: 117, letter: "P", word: "PIG", img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500&auto=format&fit=crop&q=70" },
-      { id: 118, letter: "P", word: "PAPAYA", img: "https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?w=500&auto=format&fit=crop&q=70" },
-      { id: 119, letter: "P", word: "PEN", img: "https://images.unsplash.com/photo-1585336261026-79c29800dc05?w=500&auto=format&fit=crop&q=70" },
-      { id: 120, letter: "P", word: "POLICE", img: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=500&auto=format&fit=crop&q=70" },
-      { id: 121, letter: "P", word: "PAPER", img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=500&auto=format&fit=crop&q=70" },
-      { id: 122, letter: "P", word: "PLATE", img: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=500&auto=format&fit=crop&q=70" },
-      { id: 123, letter: "P", word: "POTATO", img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=70" },
-      { id: 124, letter: "P", word: "POOR", img: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=500&auto=format&fit=crop&q=70" },
+      { id: 112, letter: "P", word: "PIG", indo: "Babi", img: "pig.png" },
+      { id: 113, letter: "P", word: "PAN(1)", indo: "Wajan", img: "pan.png" },
+      { id: 114, letter: "P", word: "PAN(2)", indo: "Wajan", img: "pan2.png" },
+      { id: 115, letter: "P", word: "PIL/CAPSULE", indo: "Pil/Kapsul", img: "pil.png" },
+      { id: 116, letter: "P", word: "PLANTING", indo: "Menanam", img: "planting.png" },
+      { id: 117, letter: "P", word: "PLATE", indo: "Piring", img: "plate.png" },
+      { id: 118, letter: "P", word: "PLOWING", indo: "Membajak", img: "plowing.png" },
+      { id: 119, letter: "P", word: "PINEAPPLE", indo: "Nanas", img: "pineapple.png" },
 
-      // --- SECTION Q (2 kata) ---
-      { id: 125, letter: "Q", word: "QUIET", img: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500&auto=format&fit=crop&q=70" },
-      { id: 126, letter: "Q", word: "QUICK", img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=70" },
-
-      // --- SECTION R (8 kata) ---
-      { id: 127, letter: "R", word: "RABBIT", img: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=500&auto=format&fit=crop&q=70" },
-      { id: 128, letter: "R", word: "RAIN", img: "https://images.unsplash.com/photo-1519692933481-e162a57d6721?w=500&auto=format&fit=crop&q=70" },
-      { id: 129, letter: "R", word: "RED", img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=70" },
-      { id: 130, letter: "R", word: "RICE", img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=70" },
-      { id: 131, letter: "R", word: "RELAXING", img: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500&auto=format&fit=crop&q=70" },
-      { id: 132, letter: "R", word: "RUN", img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=70" },
-      { id: 133, letter: "R", word: "RIVER", img: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500&auto=format&fit=crop&q=70" },
-      { id: 134, letter: "R", word: "RING", img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION R (5 kata) ---
+      { id: 120, letter: "R", word: "RUNNING", indo: "Berlari", img: "running.png" },
+      { id: 121, letter: "R", word: "RELAXING", indo: "Santai", img: "relaxing.png" },
+      { id: 122, letter: "R", word: "RED", indo: "Merah", img: "red.png" },
+      { id: 123, letter: "R", word: "RICE", indo: "Nasi", img: "rice.png" },
+      { id: 124, letter: "R", word: "ROUNDED SHAPE", indo: "Bentuk Bulat", img: "roundeds.png" },
 
       // --- SECTION S (19 kata) ---
-      { id: 135, letter: "S", word: "SOUR", img: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=500&auto=format&fit=crop&q=70" },
-      { id: 136, letter: "S", word: "SHIRT", img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=70" },
-      { id: 137, letter: "S", word: "STUPID/IDIOT", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=70" },
-      { id: 138, letter: "S", word: "SIX", img: "https://images.unsplash.com/photo-1564410267841-915d8e4d71ea?w=500&auto=format&fit=crop&q=70" },
-      { id: 139, letter: "S", word: "SHY/EMBARRASSED", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&auto=format&fit=crop&q=70" },
-      { id: 140, letter: "S", word: "SWEET", img: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&auto=format&fit=crop&q=70" },
-      { id: 141, letter: "S", word: "SKIRT", img: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500&auto=format&fit=crop&q=70" },
-      { id: 142, letter: "S", word: "SICK/DIZZY", img: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=500&auto=format&fit=crop&q=70" },
-      { id: 143, letter: "S", word: "SAME", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&auto=format&fit=crop&q=70" },
-      { id: 144, letter: "S", word: "SARONG", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&auto=format&fit=crop&q=70" },
-      { id: 145, letter: "S", word: "SATAY", img: "https://images.unsplash.com/photo-1529563021893-cc83c914d744?w=500&auto=format&fit=crop&q=70" },
-      { id: 146, letter: "S", word: "SAW", img: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500&auto=format&fit=crop&q=70" },
-      { id: 147, letter: "S", word: "SEAL", img: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=500&auto=format&fit=crop&q=70" },
-      { id: 148, letter: "S", word: "SPOON", img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=70" },
-      { id: 149, letter: "S", word: "SHOES", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=70" },
-      { id: 150, letter: "S", word: "SUKESTI (NAME OF PERSON)", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=70" },
-      { id: 151, letter: "S", word: "SLEEP", img: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=500&auto=format&fit=crop&q=70" },
-      { id: 152, letter: "S", word: "SEVEN", img: "https://images.unsplash.com/photo-1564410267841-915d8e4d71ea?w=500&auto=format&fit=crop&q=70" },
-      { id: 153, letter: "S", word: "SNAKE", img: "https://images.unsplash.com/photo-1531386151447-fd76ad50012f?w=500&auto=format&fit=crop&q=70" },
+      { id: 125, letter: "S", word: "SOUR", indo: "Asam", img: "sour.png" },
+      { id: 126, letter: "S", word: "SHIRT", indo: "Kemeja", img: "shirt.png" },
+      { id: 127, letter: "S", word: "STUPID/IDIOT", indo: "Bodoh", img: "stupid.png" },
+      { id: 128, letter: "S", word: "SIX", indo: "Enam", img: "six.png" },
+      { id: 129, letter: "S", word: "SHY/EMBARRASSED", indo: "Malu", img: "shy.png" },
+      { id: 130, letter: "S", word: "SWEET", indo: "Manis", img: "sweet.png" },
+      { id: 131, letter: "S", word: "SKIRT", indo: "Rok", img: "skirt.png" },
+      { id: 132, letter: "S", word: "SICK/DIZZY", indo: "Sakit", img: "sick.png" },
+      { id: 133, letter: "S", word: "SAME", indo: "Sama", img: "same.png" },
+      { id: 134, letter: "S", word: "SARONG", indo: "Sarung", img: "sarong.png" },
+      { id: 135, letter: "S", word: "SATAY", indo: "Sate", img: "satay.png" },
+      { id: 136, letter: "S", word: "SAW", indo: "Gergaji", img: "saw.png" },
+      { id: 137, letter: "S", word: "SEAL", indo: "Anjing Laut", img: "seal.png" },
+      { id: 138, letter: "S", word: "SPOON", indo: "Sendok", img: "spoon.png" },
+      { id: 139, letter: "S", word: "SHOES", indo: "Sepatu", img: "shoes.png" },
+      { id: 140, letter: "S", word: "SUKESTI (NAME OF PERSON)", indo: "Sukesti", img: "sukesti.png" },
+      { id: 141, letter: "S", word: "SLEEP", indo: "Tidur", img: "sleep.png" },
+      { id: 142, letter: "S", word: "SEVEN", indo: "Tujuh", img: "seven.png" },
+      { id: 143, letter: "S", word: "SNAKE", indo: "Ular", img: "snake.png" },
 
-      // --- SECTION T (15 kata) ---
-      { id: 154, letter: "T", word: "TROUSERS/PANTS", img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop&q=70" },
-      { id: 155, letter: "T", word: "TIE", img: "https://images.unsplash.com/photo-1589756823695-278bc923f962?w=500&auto=format&fit=crop&q=70" },
-      { id: 156, letter: "T", word: "TWO", img: "https://images.unsplash.com/photo-1555421689-491a97ff2040?w=500&auto=format&fit=crop&q=70" },
-      { id: 157, letter: "T", word: "TEETH", img: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=500&auto=format&fit=crop&q=70" },
-      { id: 158, letter: "T", word: "TONGUE", img: "https://images.unsplash.com/photo-1588731234159-8b9963143fca?w=500&auto=format&fit=crop&q=70" },
-      { id: 159, letter: "T", word: "TAKING BATH/SHOWER (1)", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&auto=format&fit=crop&q=70" },
-      { id: 160, letter: "T", word: "TAKING BATH/SHOWER (2)", img: "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?w=500&auto=format&fit=crop&q=70" },
-      { id: 161, letter: "T", word: "TABLE", img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=500&auto=format&fit=crop&q=70" },
-      { id: 162, letter: "T", word: "TEN", img: "https://images.unsplash.com/photo-1564410267841-915d8e4d71ea?w=500&auto=format&fit=crop&q=70" },
-      { id: 163, letter: "T", word: "TRIANGLE", img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500&auto=format&fit=crop&q=70" },
-      { id: 164, letter: "T", word: "TOOTH BRUSH", img: "https://images.unsplash.com/photo-1559591937-e1032b49d682?w=500&auto=format&fit=crop&q=70" },
-      { id: 165, letter: "T", word: "TEA (1)", img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=70" },
-      { id: 166, letter: "T", word: "TEA (2)", img: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=500&auto=format&fit=crop&q=70" },
-      { id: 167, letter: "T", word: "TEA (3)", img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=70" },
-      { id: 168, letter: "T", word: "TEA (4)", img: "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION T (17 kata) ---
+      { id: 144, letter: "T", word: "TROUSERS/PANTS", indo: "Celana", img: "trousers.png" },
+      { id: 145, letter: "T", word: "TIE", indo: "Dasi", img: "tie.png" },
+      { id: 146, letter: "T", word: "TWO", indo: "Dua", img: "two.png" },
+      { id: 147, letter: "T", word: "TEETH", indo: "Gigi", img: "teeth.png" },
+      { id: 148, letter: "T", word: "TONGUE", indo: "Lidah", img: "tongue.png" },
+      { id: 149, letter: "T", word: "TAKING BATH/SHOWER (1)", indo: "Mandi", img: "tbath.png" },
+      { id: 150, letter: "T", word: "TAKING BATH/SHOWER (2)", indo: "Mandi", img: "tbath2.png" },
+      { id: 151, letter: "T", word: "TABLE", indo: "Meja", img: "table.png" },
+      { id: 152, letter: "T", word: "TEN", indo: "Sepuluh", img: "ten.png" },
+      { id: 153, letter: "T", word: "TRIANGLE", indo: "Segitiga", img: "triangle.png" },
+      { id: 154, letter: "T", word: "TOOTH BRUSH", indo: "Sikat Gigi", img: "toothb.png" },
+      { id: 155, letter: "T", word: "TEA (1)", indo: "Teh", img: "tea1.png" },
+      { id: 156, letter: "T", word: "TEA (2)", indo: "Teh", img: "tea2.png" },
+      { id: 157, letter: "T", word: "TEA (3)", indo: "Teh", img: "tea3.png" },
+      { id: 158, letter: "T", word: "TEA (4)", indo: "Teh", img: "tea4.png" },
+      { id: 159, letter: "T", word: "THREE", indo: "Tiga", img: "three.png" },
+      { id: 160, letter: "T", word: "TOURIST", indo: "Wisatawan", img: "tourist.png" },
 
-      // --- SECTION U (1 kata) ---
-      { id: 169, letter: "U", word: "UMBRELLA", img: "https://images.unsplash.com/photo-1534353436294-0dbd4bdac845?w=500&auto=format&fit=crop&q=70" },
-
-      // --- SECTION V (1 kata) ---
-      { id: 170, letter: "V", word: "VILLAGE", img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500&auto=format&fit=crop&q=70" },
-
-      // --- SECTION W (1 kata) ---
-      { id: 171, letter: "W", word: "WATER", img: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=500&auto=format&fit=crop&q=70" },
+      // --- SECTION W (11 kata) ---
+      { id: 161, letter: "W", word: "WATER", indo: "Air", img: "water.png" },
+      { id: 162, letter: "W", word: "WORK", indo: "Bekerja", img: "work.png" },
+      { id: 163, letter: "W", word: "WIN", indo: "Menang", img: "win.png" },
+      { id: 164, letter: "W", word: "WATERMELON", indo: "Semangka", img: "waterm.png" },
+      { id: 165, letter: "W", word: "WASHING", indo: "Mencuci", img: "washing.png" },
+      { id: 166, letter: "W", word: "WANT TO", indo: "Ingin", img: "want.png" },
+      { id: 167, letter: "W", word: "WALK(2)", indo: "Berjalan", img: "walk.png" },
+      { id: 168, letter: "W", word: "WALK(1)", indo: "Berjalan", img: "walk2.png" },
+      { id: 169, letter: "W", word: "WAKE UP", indo: "Bangun", img: "wakeup.png" },
+      { id: 170, letter: "W", word: "WAIT", indo: "Tunggu", img: "wait.png" },
+      { id: 171, letter: "W", word: "WINE", indo: "Anggur", img: "wine.png" },
 
       // --- SECTION Y (1 kata) ---
-      { id: 172, letter: "Y", word: "YELLOW", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=70" }
+      { id: 172, letter: "Y", word: "YELLOW", indo: "Kuning", img: "yellow.png" }
     ];
 
     /* =========================================================================
@@ -529,7 +551,7 @@
        ========================================================================= */
     const letters = [...new Set(DICTIONARY_DATA.map(item => item.letter))].sort();
 
-    // Render Tab Indeks A - Y
+    // Render Tab Indeks
     function renderAlphabetTabs() {
       const bar = document.getElementById("alphabetList");
       bar.innerHTML = "";
@@ -568,7 +590,7 @@
       }
     }
 
-    // Render Seluruh 172 Kosakata Kamus (Format 1 Gambar + 1 Kata - Tanpa Link Padlet di Gambar)
+    // Render Seluruh Kosakata Kamus
     function renderDictionary(data) {
       const container = document.getElementById("dictionaryContainer");
       container.innerHTML = "";
@@ -582,7 +604,7 @@
             <h3 class="font-bold text-slate-800 text-base">Kosakata Tidak Ditemukan</h3>
             <p class="text-xs text-slate-500 mt-1">Coba ketik kata lain dalam bahasa Inggris yang tertera pada kamus.</p>
             <button onclick="clearSearch()" class="mt-4 px-4 py-2 bg-slate-800 text-white text-xs font-semibold rounded-xl">
-              Lihat Semua Kata (172)
+              Lihat Semua Kata
             </button>
           </div>
         `;
@@ -609,7 +631,7 @@
               ${letter}
             </div>
             <div>
-              <h2 class="font-book text-lg font-bold text-slate-900 tracking-wide">BAGIAN ${letter}</h2>
+              <h2 class="font-book text-lg font-bold text-slate-900 tracking-wide">Huruf ${letter}</h2>
               <span class="text-[11px] text-slate-500 font-sans">${grouped[letter].length} kosakata</span>
             </div>
           </div>
@@ -627,7 +649,7 @@
           card.onclick = () => openDetailModal(item);
 
           card.innerHTML = `
-            <!-- Wadah Gambar (Murni Gambar & Nomor Saja, Tanpa Tombol Padlet di Kartu) -->
+            <!-- Wadah Gambar -->
             <div class="relative w-full aspect-[4/3] bg-slate-100 overflow-hidden flex items-center justify-center">
               <img 
                 src="${item.img}" 
@@ -653,7 +675,7 @@
       });
     }
 
-    // Render 20 Lembar Kerja (Hanya Isi Link Download Soal Google Drive, Tanpa Tombol Upload per LKPD)
+    // Render Lembar Kerja
     function renderLkpdSection() {
       const grid = document.getElementById("lkpdListGrid");
       grid.innerHTML = "";
@@ -694,7 +716,7 @@
       if (q.length > 0) {
         clearBtn.classList.remove("hidden");
         const filtered = DICTIONARY_DATA.filter(item => 
-          item.word.toLowerCase().includes(q) || item.letter.toLowerCase() === q
+          item.word.toLowerCase().includes(q) || item.letter.toLowerCase() === q || item.indo.toLowerCase().includes(q)
         );
         renderDictionary(filtered);
       } else {
@@ -711,23 +733,33 @@
     }
 
     /* =========================================================================
-       5. NAVIGASI TAMPILAN UTAMA (Hanya via Tombol Navigasi Bawah)
+       5. NAVIGASI TAMPILAN UTAMA & MENU
        ========================================================================= */
     function switchView(view) {
+      const menuView = document.getElementById("viewMenu");
       const kamusView = document.getElementById("viewKamus");
       const lkpdView = document.getElementById("viewLkpd");
       const padletView = document.getElementById("viewPadlet");
+      
+      const mainHeader = document.getElementById("mainHeader");
+      const searchBarContainer = document.getElementById("searchBarContainer");
       const alphaBar = document.getElementById("alphabetIndexBar");
+      const bottomNav = document.getElementById("bottomNav");
 
       const navKamus = document.getElementById("botNavKamus");
       const navLkpd = document.getElementById("botNavLkpd");
       const navPadlet = document.getElementById("botNavPadlet");
 
       // Sembunyikan semua halaman
+      menuView.classList.add("hidden");
       kamusView.classList.add("hidden");
       lkpdView.classList.add("hidden");
       padletView.classList.add("hidden");
+      
+      mainHeader.classList.add("hidden");
+      searchBarContainer.classList.add("hidden");
       alphaBar.classList.add("hidden");
+      bottomNav.classList.add("hidden");
 
       // Reset style tombol bawah
       const inactiveClass = "flex flex-col items-center text-slate-400 hover:text-slate-800 font-medium text-[11px] gap-1 transition-all";
@@ -737,27 +769,36 @@
       navLkpd.className = inactiveClass;
       navPadlet.className = inactiveClass;
 
-      if (view === 'kamus') {
-        kamusView.classList.remove("hidden");
-        alphaBar.classList.remove("hidden");
-        navKamus.className = activeClass;
-      } else if (view === 'lkpd') {
-        lkpdView.classList.remove("hidden");
-        navLkpd.className = activeClass;
-      } else if (view === 'padlet') {
-        padletView.classList.remove("hidden");
-        navPadlet.className = activeClass;
+      if (view === 'menu') {
+        menuView.classList.remove("hidden");
+      } else {
+        // Tampilkan header dan nav bawah untuk halaman menu dalam
+        mainHeader.classList.remove("hidden");
+        bottomNav.classList.remove("hidden");
+
+        if (view === 'kamus') {
+          kamusView.classList.remove("hidden");
+          searchBarContainer.classList.remove("hidden");
+          alphaBar.classList.remove("hidden");
+          navKamus.className = activeClass;
+        } else if (view === 'lkpd') {
+          lkpdView.classList.remove("hidden");
+          navLkpd.className = activeClass;
+        } else if (view === 'padlet') {
+          padletView.classList.remove("hidden");
+          navPadlet.className = activeClass;
+        }
       }
     }
 
-    // Modal Detail Kata
+    // Modal Detail Kata dengan Terjemahan Bahasa Indonesia
     function openDetailModal(item) {
       document.getElementById("modalImage").src = item.img;
       document.getElementById("modalImage").onerror = function() {
         this.src = `https://placehold.co/400x300/f8fafc/475569?text=${encodeURIComponent(item.word)}`;
       };
       document.getElementById("modalWord").innerText = item.word;
-      document.getElementById("modalSection").innerText = `HURUF ${item.letter} • NOMOR #${item.id}`;
+      document.getElementById("modalTranslation").innerText = item.indo;
       document.getElementById("wordDetailModal").classList.remove("hidden");
     }
 
@@ -765,36 +806,12 @@
       document.getElementById("wordDetailModal").classList.add("hidden");
     }
 
-    // Modal Pengaturan Link Guru
-    function openConfigModal() {
-      document.getElementById("cfgPadletPractice").value = padletPracticeUrl;
-      document.getElementById("cfgPadletLkpd").value = padletLkpdUploadUrl;
-      document.getElementById("configModal").classList.remove("hidden");
-    }
-
-    function closeConfigModal() {
-      document.getElementById("configModal").classList.add("hidden");
-    }
-
-    function saveConfig() {
-      const p1 = document.getElementById("cfgPadletPractice").value.trim();
-      const p2 = document.getElementById("cfgPadletLkpd").value.trim();
-      if (p1) padletPracticeUrl = p1;
-      if (p2) padletLkpdUploadUrl = p2;
-
-      document.getElementById("btnPadletTugasLkpd").href = padletLkpdUploadUrl;
-      document.getElementById("btnDirectPadlet").href = padletPracticeUrl;
-
-      closeConfigModal();
-    }
-
     // Inisialisasi saat Halaman Dimuat
     window.onload = function() {
       renderAlphabetTabs();
       renderDictionary(DICTIONARY_DATA);
       renderLkpdSection();
-      document.getElementById("btnPadletTugasLkpd").href = padletLkpdUploadUrl;
-      document.getElementById("btnDirectPadlet").href = padletPracticeUrl;
+      switchView('menu');
     };
   </script>
 </body>
